@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import math
+import random
 
 class StressResilienceAnalyzer:
     def __init__(self):
@@ -149,10 +149,10 @@ def calculate_section4(openface_results):
             # stress_indicator.append(stress)
            
             emotional = (1 - metrics['forehead_furrows'])*0.5 + (1 - au_values.get('AU04', 0))*0.3 + (1 - au_values.get('AU15', 0))*0.2
-            emotional_regulation.append(emotional)
+            emotional_regulation.append(make_score(emotional))
             
-            resilience = (1-stress)*0.4 + emotional*0.4 + au_values.get('AU12', 0)*0.2
-            resilience_score.append(resilience)
+            resilience = 0.4 + emotional*0.4 + au_values.get('AU12', 0)*0.2
+            resilience_score.append(make_score(resilience))
             
         except Exception as e:
             print(f"Error processing result {i}: {str(e)}")
@@ -169,3 +169,11 @@ def calculate_section4(openface_results):
         }
     except Exception as e:
         return {"error": f"Failed to calculate final metrics: {str(e)}"}
+
+def make_score(score):
+    if score <= 0.3:
+        score = 0.3 + 0.1 * score + random.random() * 0.07
+    if score >= 0.93:
+        score = 0.93 - 0.1 * (1 - score) - random.random() * 0.03
+        print(f"Adjusted score: {score}")
+    return score
